@@ -42,11 +42,22 @@ smart-city-digital-twin/
 
 ---
 
-## 🚀 Local Deployment
+## 🚀 Execution & Deployment
 
-To run the application locally without any build setup:
+### Run in GitHub Codespaces (Directly on Web)
+1. On your GitHub repository page, click the green **Code** button.
+2. Select the **Codespaces** tab, then click **Create codespace on main**.
+3. Once the Codespace environment initializes, open the VS Code Terminal.
+4. Run the following command:
+   ```bash
+   python3 -m http.server 8000
+   ```
+5. Click the pop-up notification **"Open in Browser"** (or go to the **Ports** panel and click the Local Address link) to view the live dashboard.
 
-### Method 1: Using Python (Recommended)
+### Local Deployment
+To run the application locally on your machine:
+
+#### Method 1: Using Python (Recommended)
 1. Open your terminal.
 2. Navigate to the project directory:
    ```bash
@@ -56,12 +67,9 @@ To run the application locally without any build setup:
    ```bash
    python3 -m http.server 8000
    ```
-4. Open your browser and navigate to:
-   ```text
-   http://localhost:8000
-   ```
+4. Open your browser and navigate to: `http://localhost:8000`
 
-### Method 2: Direct Execution
+#### Method 2: Direct Execution
 Simply locate the project folder and double-click the **`index.html`** file to open it directly in your web browser of choice.
 
 ---
