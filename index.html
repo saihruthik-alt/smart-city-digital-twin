@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyderabad Smart City Digital Twin | Dashboard</title>
+    
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet.js GIS Mapping CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-city logo-icon"></i>
+                <div class="logo-text">HYD-TWIN</div>
+            </div>
+            
+            <ul class="sidebar-nav">
+                <li class="nav-item active" data-tab="dashboard">
+                    <a href="#dashboard">
+                        <i class="fa-solid fa-gauge-high"></i>
+                        <span class="nav-label">Main Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="traffic">
+                    <a href="#traffic">
+                        <i class="fa-solid fa-car-side"></i>
+                        <span class="nav-label">Traffic Monitor</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="pollution">
+                    <a href="#pollution">
+                        <i class="fa-solid fa-leaf"></i>
+                        <span class="nav-label">Environment & AQI</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="utilities">
+                    <a href="#utilities">
+                        <i class="fa-solid fa-plug"></i>
+                        <span class="nav-label">Grid & Water Utilities</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="safety">
+                    <a href="#safety">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span class="nav-label">Safety & CCTV</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="ai-prediction">
+                    <a href="#ai-prediction">
+                        <i class="fa-solid fa-brain"></i>
+                        <span class="nav-label">AI Simulator & Drones</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="weather">
+                    <a href="#weather">
+                        <i class="fa-solid fa-cloud-sun"></i>
+                        <span class="nav-label">Weather Forecast</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-tab="complaints">
+                    <a href="#complaints">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span class="nav-label">Public Complaints</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div>Digital Twin Engine v2.4</div>
+                <div class="developer-tag">Designed & Built by: <br><span>Kondra Sai Hruthik</span></div>
+            </div>
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Global Dashboard Header -->
+            <header class="header">
+                <div class="header-title-section">
+                    <h1 id="header-page-title">City Overview</h1>
+                    <p>Hyderabad Digital Twin Infrastructure Management System</p>
+                </div>
+                
+                <div class="header-status-panel">
+                    <div class="status-indicator">
+                        <div class="status-dot pulse"></div>
+                        <span>Twin Link Active</span>
+                    </div>
+                    <div class="header-meta">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span id="current-date">July 14, 2026</span>
+                    </div>
+                    <div class="header-meta">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="current-time">10:19 AM</span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- ================= VIEW: MAIN DASHBOARD ================= -->
+            <section id="dashboard" class="page-view active">
+                
+                <!-- Map & Core Stat Summary -->
+                <div class="dashboard-grid">
+                    
+                    <!-- GIS Interactive Map -->
+                    <div class="glass-panel map-section">
+                        <div class="panel-header">
+                            <h3 class="panel-title">
+                                <i class="fa-solid fa-map-location-dot" style="color: var(--accent);"></i>
+                                Hyderabad Interactive Digital Twin GIS
+                            </h3>
+                            <span class="badge-blue log-status-badge">Live Map Feed</span>
+                        </div>
+                        <div class="map-wrapper">
+                            <div id="leaflet-map"></div>
+                            
+                            <!-- Custom Map Layers Toggle Controller Overlay -->
+                            <div class="map-control-overlay">
+                                <div class="map-control-title">Simulation Overlays</div>
+                                <div class="map-layer-toggles">
+                                    <button class="layer-toggle-btn active" id="toggle-traffic">
+                                        <i class="fa-solid fa-car"></i> Traffic
+                                    </button>
+                                    <button class="layer-toggle-btn active" id="toggle-aqi">
+                                        <i class="fa-solid fa-wind"></i> AQI
+                                    </button>
+                                    <button class="layer-toggle-btn" id="toggle-cctv">
+                                        <i class="fa-solid fa-video"></i> CCTV
+                                    </button>
+                                    <button class="layer-toggle-btn active" id="toggle-drones">
+                                        <i class="fa-solid fa-helicopter"></i> Drones
+                                    </button>
+                                    <button class="layer-toggle-btn" id="toggle-crime">
+                                        <i class="fa-solid fa-triangle-exclamation"></i> Safety
+                                    </button>
+                                    <button class="layer-toggle-btn" id="toggle-utilities">
+                                        <i class="fa-solid fa-network-wired"></i> Grids
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar Statistics Summary -->
+                    <div class="stat-summary-section">
+                        
+                        <!-- Metric 1: Traffic -->
+                        <div class="stat-card-mini">
+                            <div class="stat-info">
+                                <span class="stat-label">Congestion Index</span>
+                                <span class="stat-value" id="dashboard-traffic-index">32%</span>
+                                <span class="stat-change down"><i class="fa-solid fa-arrow-trend-down"></i> -4.2% (vs yesterday)</span>
+                            </div>
+                            <div class="stat-icon-wrapper" style="background: var(--warning-glow); color: var(--traffic-color);">
+                                <i class="fa-solid fa-car-side"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Metric 2: AQI -->
+                        <div class="stat-card-mini">
+                            <div class="stat-info">
+                                <span class="stat-label">City AQI Avg</span>
+                                <span class="stat-value" id="dashboard-aqi-value">84 PM2.5</span>
+                                <span class="stat-change up"><i class="fa-solid fa-arrow-trend-up"></i> +12 AQI (dust hazard)</span>
+                            </div>
+                            <div class="stat-icon-wrapper" style="background: var(--success-glow); color: var(--pollution-color);">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Metric 3: Water Reserves -->
+                        <div class="stat-card-mini">
+                            <div class="stat-info">
+                                <span class="stat-label">Hussain Sagar Level</span>
+                                <span class="stat-value" id="dashboard-hussain-sagar">513.4 m</span>
+                                <span class="stat-change stable"><i class="fa-solid fa-arrows-left-right"></i> Stable (Optimal)</span>
+                            </div>
+                            <div class="stat-icon-wrapper" style="background: var(--info-glow); color: var(--water-color);">
+                                <i class="fa-solid fa-water"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Metric 4: Grid Load -->
+                        <div class="stat-card-mini">
+                            <div class="stat-info">
+                                <span class="stat-label">Grid Load Status</span>
+                                <span class="stat-value" id="dashboard-electricity-load">1,482 MW</span>
+                                <span class="stat-change up"><i class="fa-solid fa-bolt"></i> Peak Hours approaching</span>
+                            </div>
+                            <div class="stat-icon-wrapper" style="background: rgba(0, 242, 254, 0.1); color: var(--electricity-color);">
+                                <i class="fa-solid fa-plug"></i>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <!-- Overview Cards Row 1 -->
+                <div class="module-row-1">
+                    
+                    <!-- Traffic Monitoring Mini Card -->
+                    <div class="glass-panel panel-traffic">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-traffic-light" style="color: var(--traffic-color);"></i> Traffic Hotspots</h4>
+                            <span class="badge-yellow log-status-badge">Moderate</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Hitech City Flyover</span>
+                            <span class="metric-val text-danger" id="traffic-hitech">High (14 km/h)</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Begumpet Crossing</span>
+                            <span class="metric-val text-warning" id="traffic-begumpet">Moderate (26 km/h)</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Charminar Ring</span>
+                            <span class="metric-val text-success" id="traffic-charminar">Normal (34 km/h)</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">Signal Failures</span>
+                            <span class="metric-val" id="traffic-signals-out">0 Nodes Offline</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Pollution Monitoring Mini Card -->
+                    <div class="glass-panel panel-pollution">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-lungs" style="color: var(--pollution-color);"></i> Environment / Air Quality</h4>
+                            <span class="badge-green log-status-badge" id="aqi-badge">Good</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Jubilee Hills Station</span>
+                            <span class="metric-val text-success" id="aqi-jubilee">54 AQI</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Secunderabad Hub</span>
+                            <span class="metric-val text-warning" id="aqi-secunderabad">118 AQI</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Gachibowli Node</span>
+                            <span class="metric-val text-success" id="aqi-gachibowli">62 AQI</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">Active Sensors</span>
+                            <span class="metric-val text-success">42 / 42 Online</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Utilities Overview Mini Card -->
+                    <div class="glass-panel panel-electricity">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-bolt" style="color: var(--electricity-color);"></i> Smart Grid & Outages</h4>
+                            <span class="badge-green log-status-badge" id="grid-status-badge">Healthy</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Solar Farms Prod.</span>
+                            <span class="metric-val text-success" id="grid-solar">328 MW</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Peak Grid Load</span>
+                            <span class="metric-val" id="grid-peak">1,540 MW</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Backup Storage</span>
+                            <span class="metric-val" id="grid-backup">94%</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">Active Outages</span>
+                            <span class="metric-val text-success" id="grid-outages">0 Zones Affected</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Water Systems Mini Card -->
+                    <div class="glass-panel panel-water">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-droplet" style="color: var(--water-color);"></i> Water Management</h4>
+                            <span class="badge-blue log-status-badge">Normal</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Daily Usage</span>
+                            <span class="metric-val" id="water-daily">482 MGD</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Osman Sagar Lev.</span>
+                            <span class="metric-val" id="water-osman">534.2 m</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Himayat Sagar Lev.</span>
+                            <span class="metric-val" id="water-himayat">512.6 m</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">Detected Leakages</span>
+                            <span class="metric-val text-warning" id="water-leaks">3 Minor Alerts</span>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Overview Cards Row 2 -->
+                <div class="module-row-2">
+                    
+                    <!-- AI Prediction Mini Card -->
+                    <div class="glass-panel panel-cctv">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-microchip" style="color: var(--cctv-color);"></i> Smart CCTV Analytics</h4>
+                            <span class="badge-blue log-status-badge">Active</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Total Cameras</span>
+                            <span class="metric-val">1,248 Online</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Active Object Track</span>
+                            <span class="metric-val text-success" id="cctv-tracks">8,410 targets</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">AI Event Alerts</span>
+                            <span class="metric-val text-warning" id="cctv-alerts">4 Flagged Events</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">Analytics Accuracy</span>
+                            <span class="metric-val">98.4%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Drone Data Mini Card -->
+                    <div class="glass-panel panel-drone">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-helicopter" style="color: var(--drone-color);"></i> Drone Surveillance</h4>
+                            <span class="badge-green log-status-badge" id="drone-squad-badge">4 In Flight</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Active Drone Squad</span>
+                            <span class="metric-val">Squad Alpha, Beta</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Patrol Area Cover</span>
+                            <span class="metric-val" id="drone-coverage">82% Gachibowli</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Battery Telemetry</span>
+                            <span class="metric-val text-success" id="drone-battery">84% Avg</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">Next Launch Schedule</span>
+                            <span class="metric-val">Squad Gamma (11:00 AM)</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Crime Heatmap Mini Card -->
+                    <div class="glass-panel panel-crime">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-shield-halved" style="color: var(--crime-color);"></i> Security Index</h4>
+                            <span class="badge-green log-status-badge">Safe (92.4)</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Patrol Coverage</span>
+                            <span class="metric-val">96.8% Response</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Active Incidents</span>
+                            <span class="metric-val text-danger" id="crime-active">1 Alert Dispatch</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Last 24h Incidents</span>
+                            <span class="metric-val" id="crime-last24">8 Closed Cases</span>
+                        </div>
+                        <div class="metric-row" style="margin-top: 10px;">
+                            <span class="metric-name">General Status</span>
+                            <span class="metric-val text-success">Secure Grid State</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: TRAFFIC MONITOR ================= -->
+            <section id="traffic" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-car-side" style="color: var(--traffic-color);"></i> Real-Time Traffic Management</h2>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="simulateTrafficRush()"><i class="fa-solid fa-bolt"></i> Trigger Rush Hour</button>
+                    </div>
+                </div>
+                
+                <div class="view-split-layout">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Average Velocity Trends (24h)</h4>
+                        </div>
+                        <div class="chart-container-large">
+                            <canvas id="trafficVelocityChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Junction Delays & Bottlenecks</h4>
+                        </div>
+                        <div class="log-container" id="traffic-bottlenecks-list">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: ENVIRONMENT & AQI ================= -->
+            <section id="pollution" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-leaf" style="color: var(--pollution-color);"></i> Air Quality & Environmental Sensors</h2>
+                    <div class="page-header-actions">
+                        <button class="btn btn-secondary" onclick="refreshAQIData()"><i class="fa-solid fa-arrows-rotate"></i> Poll Sensor Network</button>
+                    </div>
+                </div>
+                
+                <div class="view-triple-layout">
+                    <!-- Sensor Gauge -->
+                    <div class="glass-panel" style="text-align: center;">
+                        <div class="panel-header">
+                            <h4 class="panel-title">AQI Core index</h4>
+                        </div>
+                        <div class="circular-progress-box">
+                            <div style="position: relative;">
+                                <svg class="circle-svg">
+                                    <circle class="circle-bg" cx="60" cy="60" r="54"></circle>
+                                    <circle class="circle-fill" id="aqi-progress-circle" cx="60" cy="60" r="54" style="stroke: var(--pollution-color);"></circle>
+                                </svg>
+                                <span class="percentage-overlay" id="aqi-gauge-text">84</span>
+                            </div>
+                            <div class="stat-label">Pollutant: PM2.5 / PM10 mixture</div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel" style="grid-column: span 2;">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Regional PM2.5 Levels (ug/m³)</h4>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="aqiRegionsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-panel" style="margin-top: 24px;">
+                    <div class="panel-header">
+                        <h4 class="panel-title">Environmental Station Logs</h4>
+                    </div>
+                    <div class="log-container" id="aqi-log-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: UTILITIES ================= -->
+            <section id="utilities" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-plug" style="color: var(--electricity-color);"></i> Municipal Utility Smart Grids</h2>
+                </div>
+                
+                <div class="view-split-layout">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-network-wired" style="color: var(--electricity-color);"></i> Electricity Demand Forecasting</h4>
+                        </div>
+                        <div class="chart-container-large">
+                            <canvas id="electricityDemandChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-droplet" style="color: var(--water-color);"></i> Water Reservoir Levels</h4>
+                        </div>
+                        <div class="metric-row" style="padding-top: 20px;">
+                            <span class="metric-name">Osman Sagar Depth</span>
+                            <span class="metric-val" id="utility-osman">534.20 m</span>
+                        </div>
+                        <div style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; margin-bottom: 20px;">
+                            <div id="bar-osman" style="height: 100%; background: var(--water-color); width: 85%;"></div>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-name">Himayat Sagar Depth</span>
+                            <span class="metric-val" id="utility-himayat">512.60 m</span>
+                        </div>
+                        <div style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; margin-bottom: 20px;">
+                            <div id="bar-himayat" style="height: 100%; background: var(--water-color); width: 72%;"></div>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-name">Singur Dam Vol.</span>
+                            <span class="metric-val">421.15 m</span>
+                        </div>
+                        <div style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; margin-bottom: 20px;">
+                            <div style="height: 100%; background: var(--water-color); width: 60%;"></div>
+                        </div>
+                        
+                        <div class="metric-row" style="margin-top: 30px;">
+                            <span class="metric-name">City Distribution Efficiency</span>
+                            <span class="metric-val text-success">94.2%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Average Daily Outflow</span>
+                            <span class="metric-val">462 MGD</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: SAFETY & CCTV ================= -->
+            <section id="safety" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-shield-halved" style="color: var(--crime-color);"></i> CCTV Analytics & Crime Heatmap</h2>
+                    <div class="page-header-actions">
+                        <select class="form-control" id="cctv-selector" style="background: var(--bg-secondary); border-color: var(--panel-border);">
+                            <option value="cam-01">Camera #01: Hitech City Junction</option>
+                            <option value="cam-02">Camera #02: Secunderabad Station Exit</option>
+                            <option value="cam-03">Camera #03: Charminar Bazaar Lane</option>
+                            <option value="cam-04">Camera #04: Gachibowli Ring Road</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="view-split-layout">
+                    <!-- CCTV Stream Simulator -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-video" style="color: var(--cctv-color);"></i> Live AI Analytics Stream</h4>
+                            <span class="badge-red log-status-badge pulse" style="background: rgba(239, 68, 68, 0.15)">REC // LIVE</span>
+                        </div>
+                        
+                        <div class="cctv-simulator-window">
+                            <div class="cctv-stream-container" id="cctv-video-container">
+                                <div class="cctv-scanline"></div>
+                                <div class="cctv-static-grid"></div>
+                                <div class="cctv-overlay-info" id="cctv-metadata">
+                                    NODE: CAM-01_HITECH<br>
+                                    FPS: 30.00 // CODEC: H.265<br>
+                                    RESOLUTION: 3840x2160
+                                </div>
+                                <div class="cctv-timestamp" id="cctv-timer">10:19:11</div>
+                                
+                                <!-- Reticle & Object Boxes -->
+                                <div class="cctv-target-reticle" style="top: 50%; left: 50%;"></div>
+                                <div class="cctv-bbox vehicle" style="width: 120px; height: 70px; top: 30%; left: 15%;">
+                                    <div class="cctv-bbox-label">VEHICLE: 98.2%</div>
+                                </div>
+                                <div class="cctv-bbox" style="width: 45px; height: 90px; top: 40%; left: 70%;">
+                                    <div class="cctv-bbox-label">PEDESTRIAN: 91.0%</div>
+                                </div>
+                                <div class="cctv-bbox vehicle" style="width: 100px; height: 60px; top: 60%; left: 45%;">
+                                    <div class="cctv-bbox-label">VEHICLE: 99.4%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin-top: 16px; font-size: 13px;">
+                            <div>AI Object Count: <span id="cctv-count-vehicles" class="text-success" style="font-weight: 700;">8 Vehicles</span>, <span id="cctv-count-pedestrians" class="text-success" style="font-weight: 700;">3 Pedestrians</span></div>
+                            <div class="text-warning"><i class="fa-solid fa-circle-exclamation"></i> Lane Obstruction Detected (Gachibowli)</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dispatch & Incident Logs -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Safety Incident Logs</h4>
+                        </div>
+                        <div class="log-container" id="safety-log-list">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: AI SIMULATION & DRONES ================= -->
+            <section id="ai-prediction" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-brain" style="color: var(--accent);"></i> Predictive AI Models & Drone Dispatch</h2>
+                </div>
+                
+                <div class="view-split-layout">
+                    <!-- Simulator Params Control -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-sliders" style="color: var(--accent);"></i> Neural Forecast Parameters</h4>
+                            <span class="badge-blue log-status-badge">AI Predictive Engine</span>
+                        </div>
+                        
+                        <div class="simulator-controls">
+                            <div class="simulator-param">
+                                <div class="param-header">
+                                    <span class="param-label">Simulation Time of Day</span>
+                                    <span class="param-value" id="sim-val-time">18:00 (Rush Hour)</span>
+                                </div>
+                                <input type="range" class="param-slider" id="sim-slider-time" min="0" max="23" value="18">
+                            </div>
+                            
+                            <div class="simulator-param">
+                                <div class="param-header">
+                                    <span class="param-label">Simulated Rainfall</span>
+                                    <span class="param-value" id="sim-val-rain">50 mm (Heavy)</span>
+                                </div>
+                                <input type="range" class="param-slider" id="sim-slider-rain" min="0" max="100" value="50">
+                            </div>
+                            
+                            <div class="simulator-param">
+                                <div class="param-header">
+                                    <span class="param-label">Simulated Public Events (Hitec City/Secunderabad)</span>
+                                    <span class="param-value" id="sim-val-events">Active Expo</span>
+                                </div>
+                                <input type="range" class="param-slider" id="sim-slider-events" min="0" max="2" value="1">
+                            </div>
+                        </div>
+                        
+                        <!-- Predicted Outcomes Panel -->
+                        <div style="border-top: 1px solid var(--panel-border); margin-top: 24px; padding-top: 16px;">
+                            <div class="map-control-title">Predicted City Impacts</div>
+                            <div class="metric-row">
+                                <span class="metric-name">Predicted Congestion Index</span>
+                                <span class="metric-val text-danger" id="pred-congestion">78% (Severe bottlenecking)</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-name">Peak Grid Draw Forecast</span>
+                                <span class="metric-val text-warning" id="pred-power">1,780 MW</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-name">Water Runoff/Flow Rate</span>
+                                <span class="metric-val text-success" id="pred-water">24,500 L/sec</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Drones Dispatch Radar -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title"><i class="fa-solid fa-helicopter" style="color: var(--drone-color);"></i> Live Drone Tracking Radar</h4>
+                            <span class="badge-green log-status-badge">SQUAD ACTIVE</span>
+                        </div>
+                        
+                        <div class="radar-widget-container">
+                            <div class="radar-sweep-circle">
+                                <div class="radar-grid-line"></div>
+                                <div class="radar-grid-line vertical"></div>
+                                <div class="radar-concentric radar-concentric-1"></div>
+                                <div class="radar-concentric radar-concentric-2"></div>
+                                <div class="radar-blip radar-blip-1"></div>
+                                <div class="radar-blip radar-blip-2"></div>
+                                <div class="radar-blip radar-blip-3"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-name">Drones Patrol Speed</span>
+                            <span class="metric-val">42 km/h</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Average Drone Height</span>
+                            <span class="metric-val">120 meters</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: WEATHER FORECAST ================= -->
+            <section id="weather" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-cloud-sun" style="color: var(--weather-color);"></i> Meteorological Sensors & Forecast</h2>
+                </div>
+                
+                <div class="view-split-layout">
+                    <!-- Daily Forecast panel -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Today's Microclimate Stats</h4>
+                            <span class="badge-blue log-status-badge">Rain Impending</span>
+                        </div>
+                        
+                        <div class="weather-main-display">
+                            <div class="weather-temp-box">
+                                <span class="weather-temp" id="weather-core-temp">31</span>
+                                <span class="weather-unit">°C</span>
+                            </div>
+                            <i class="fa-solid fa-cloud-showers-water weather-icon-lg" id="weather-core-icon"></i>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-name">Humidity Index</span>
+                            <span class="metric-val" id="weather-humidity">78%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Wind Velocity</span>
+                            <span class="metric-val" id="weather-wind">14 km/h (SW)</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Precipitation Chance</span>
+                            <span class="metric-val">90%</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-name">Barometric Pressure</span>
+                            <span class="metric-val">1008 hPa</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Hourly Forecast panel -->
+                    <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div class="panel-header">
+                                <h4 class="panel-title">Hourly Projection</h4>
+                            </div>
+                            <p class="stat-label">Weather pattern forecast for the next 5 hours in Hyderabad Central.</p>
+                            
+                            <div class="weather-hourly-strip">
+                                <div class="hourly-item">
+                                    <div class="hourly-time">11:00 AM</div>
+                                    <i class="fa-solid fa-cloud-showers-water hourly-icon"></i>
+                                    <div class="hourly-temp">30°C</div>
+                                </div>
+                                <div class="hourly-item">
+                                    <div class="hourly-time">12:00 PM</div>
+                                    <i class="fa-solid fa-cloud-showers-heavy hourly-icon"></i>
+                                    <div class="hourly-temp">28°C</div>
+                                </div>
+                                <div class="hourly-item">
+                                    <div class="hourly-time">01:00 PM</div>
+                                    <i class="fa-solid fa-cloud-showers-heavy hourly-icon"></i>
+                                    <div class="hourly-temp">28°C</div>
+                                </div>
+                                <div class="hourly-item">
+                                    <div class="hourly-time">02:00 PM</div>
+                                    <i class="fa-solid fa-cloud-sun-rain hourly-icon"></i>
+                                    <div class="hourly-temp">29°C</div>
+                                </div>
+                                <div class="hourly-item">
+                                    <div class="hourly-time">03:00 PM</div>
+                                    <i class="fa-solid fa-cloud hourly-icon"></i>
+                                    <div class="hourly-temp">31°C</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card-mini" style="margin-top: 24px;">
+                            <div class="stat-info">
+                                <span class="stat-label">Rain Gauging Status</span>
+                                <span class="stat-value">Light Rain</span>
+                                <span class="stat-change stable">0.8 mm/h accumulation</span>
+                            </div>
+                            <i class="fa-solid fa-cloud-rain" style="font-size: 24px; color: var(--weather-color)"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ================= VIEW: PUBLIC COMPLAINTS ================= -->
+            <section id="complaints" class="page-view">
+                <div class="page-header">
+                    <h2><i class="fa-solid fa-circle-exclamation" style="color: var(--accent);"></i> Public Complaint Logging System</h2>
+                </div>
+                
+                <div class="view-split-layout">
+                    <!-- Form panel -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title">File New Grievance</h4>
+                        </div>
+                        
+                        <form class="complaint-form" id="grievance-form" onsubmit="submitComplaint(event)">
+                            <div class="form-group">
+                                <label class="form-label" for="complaint-category">Sector Category</label>
+                                <select class="form-control" id="complaint-category" required>
+                                    <option value="Traffic">Traffic / Signal Outage</option>
+                                    <option value="Pollution">Pothole / Road Damage</option>
+                                    <option value="Electricity">Electricity Outage / Streetlight</option>
+                                    <option value="Water Usage">Water Supply / Leakage</option>
+                                    <option value="CCTV Analytics">Broken CCTV / Safety Hazard</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="complaint-location">Location Neighborhood</label>
+                                <select class="form-control" id="complaint-location" required>
+                                    <option value="Gachibowli Junction">Gachibowli Junction</option>
+                                    <option value="Jubilee Hills Road No. 36">Jubilee Hills Road No. 36</option>
+                                    <option value="Begumpet Flyover Area">Begumpet Flyover Area</option>
+                                    <option value="Charminar Bazaar Area">Charminar Bazaar Area</option>
+                                    <option value="Secunderabad Railway Stn">Secunderabad Railway Stn</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="complaint-description">Complaint Description</label>
+                                <textarea class="form-control" id="complaint-description" placeholder="Provide full details of the issue..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="margin-top: 10px;"><i class="fa-solid fa-paper-plane"></i> Dispatch Grievance</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Live tracking list -->
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <h4 class="panel-title">Track Complaint Status</h4>
+                            <span class="badge-blue log-status-badge" id="complaint-count-badge">4 Registered</span>
+                        </div>
+                        
+                        <div class="log-container" id="complaints-list">
+                            <!-- Populated dynamically by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+        
+    </div>
+
+    <!-- JS CDN Dependencies -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Application Modules -->
+    <script src="map.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
