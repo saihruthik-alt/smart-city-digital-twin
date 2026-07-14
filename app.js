@@ -8,12 +8,14 @@ let trafficChart, aqiChart, powerChart;
 let currentTab = 'dashboard';
 
 // Grievances store with mock initial records
-let grievances = [
+const defaultGrievances = [
     { id: 1081, category: "Traffic", location: "Gachibowli Junction", description: "Traffic light synchronization mismatch creating Hitech flyover backups.", status: "In Progress", timestamp: "10:04 AM" },
     { id: 1082, category: "Water Usage", location: "Jubilee Hills Road No. 36", description: "Water pipeline leakage spreading across road near Metro pillar.", status: "Resolved", timestamp: "08:15 AM" },
     { id: 1083, category: "Electricity", location: "Charminar Bazaar Area", description: "Streetlight array offline on the south approach avenue.", status: "Pending", timestamp: "10:12 AM" },
     { id: 1084, category: "Pollution", location: "Secunderabad Railway Stn", description: "Construction dust hazard. Water sprays not active.", status: "Pending", timestamp: "10:17 AM" }
 ];
+
+let grievances = JSON.parse(localStorage.getItem('hyd_twin_grievances')) || defaultGrievances;
 
 // Mock traffic bottleneck records
 const bottlenecks = [
@@ -296,6 +298,7 @@ window.submitComplaint = function(event) {
     };
     
     grievances.unshift(newComplaint);
+    localStorage.setItem('hyd_twin_grievances', JSON.stringify(grievances));
     renderComplaints();
     
     // Add point on the map where the complaint is registered
@@ -556,3 +559,13 @@ window.refreshAQIData = function() {
         }, 300);
     }
 };
+
+window.resetComplaints = function() {
+    if (confirm("Are you sure you want to reset the complaints database back to initial defaults?")) {
+        localStorage.removeItem('hyd_twin_grievances');
+        grievances = [...defaultGrievances];
+        renderComplaints();
+        alert("Complaints database successfully reset to default.");
+    }
+};
+
